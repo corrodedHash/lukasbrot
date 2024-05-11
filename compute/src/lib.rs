@@ -109,8 +109,7 @@ mod bigboy {
         width: u32,
         height: u32,
     ) -> Vec<u8> {
-        let mut result = vec![];
-        result.reserve(4 * (width as usize) * (height as usize));
+        let mut result = Vec::with_capacity(4 * (width as usize) * (height as usize));
         for x_offset in 0..width {
             let x = start_x + x_offset;
             for y_offset in 0..height {

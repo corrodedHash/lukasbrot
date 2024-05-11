@@ -155,7 +155,9 @@ function render(wasm: any, ctx: CanvasRenderingContext2D, view: ViewSettings) {
 }
 
 async function setup() {
-  const wasm = await import("../pkg");
+  const wasm_module = await import("../compute/Cargo.toml");
+  const wasm = await wasm_module.default();
+  console.log(wasm)
   const canvas = document.getElementById("drawing") as HTMLCanvasElement;
   if (canvas === null) {
     console.error("Could not find canvas element");
