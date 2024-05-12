@@ -3,6 +3,7 @@ import path from "path";
 
 /** @type {import('vite').UserConfig} */
 export default {
+  base: "./",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
