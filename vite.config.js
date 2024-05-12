@@ -1,10 +1,12 @@
 import rust from "@wasm-tool/rollup-plugin-rust";
+import path from "path";
 
+/** @type {import('vite').UserConfig} */
 export default {
-    input: {
-        // foo: "compute/Cargo.toml",
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
     },
-    plugins: [
-        rust(),
-    ],
+  },
+  plugins: [rust({ verbose: true })],
 };

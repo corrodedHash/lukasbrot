@@ -23,8 +23,9 @@ function render(wasm: any, ctx: CanvasRenderingContext2D, view: ViewSettings) {
   ctx.drawImage(newCanvas, 0, 0);
 }
 
+
 async function setup() {
-  const wasm_module = await import("../compute/Cargo.toml");
+  const wasm_module = await import("./compute/Cargo.toml");
   const wasm = await wasm_module.default();
 
   const canvas = document.getElementById("drawing") as HTMLCanvasElement;
