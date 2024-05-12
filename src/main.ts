@@ -28,6 +28,12 @@ async function setup() {
   const wasm = await wasm_module.default();
 
   const canvas = document.getElementById("drawing") as HTMLCanvasElement;
+  const position_output =
+    document.querySelector<HTMLSpanElement>("#positionText");
+  if (position_output === null) {
+    console.error("Could not find textbox");
+    return;
+  }
   if (canvas === null) {
     console.error("Could not find canvas element");
     return;
@@ -39,11 +45,12 @@ async function setup() {
     throw new Error("Could not acquire canvas context");
   }
 
-  requestAnimationFrame(() => {
+  setInterval(() => {
     if (!view.dirty) return;
     view.dirty = false;
     render(wasm, ctx, view);
-  });
+    position_output.innerText = `${Math.floor(view.start_x)}/${Math.floor(view.start_y)}`;
+  }, 33);
 }
 
 setup();

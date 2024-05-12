@@ -1,22 +1,23 @@
 import { ViewSettings } from "./ViewSettings";
 
+function getEventLocation(e: MouseEvent | TouchEvent): {
+  x: number;
+  y: number;
+} {
+  if ("touches" in e) {
+    console.assert(e.touches.length == 1);
+    return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  } else {
+    console.assert("clientX" in e);
+    return { x: e.clientX, y: e.clientY };
+  }
+}
+
 export function setup_canvas(canvas: HTMLCanvasElement, view: ViewSettings) {
   const MAX_ZOOM = 6;
   const MIN_ZOOM = 1;
   let SCROLL_SENSITIVITY = 0.005;
 
-  function getEventLocation(e: MouseEvent | TouchEvent): {
-    x: number;
-    y: number;
-  } {
-    if ("touches" in e) {
-      console.assert(e.touches.length == 1);
-      return { x: e.touches[0].clientX, y: e.touches[0].clientY };
-    } else {
-      console.assert("clientX" in e);
-      return { x: e.clientX, y: e.clientY };
-    }
-  }
   let isDragging = false;
   let dragStart = { x: 0, y: 0 };
 
@@ -26,21 +27,22 @@ export function setup_canvas(canvas: HTMLCanvasElement, view: ViewSettings) {
     dragStart.y = view.start_y + getEventLocation(e).y / view.zoom;
   }
 
-  function onPointerUp(e: TouchEvent | MouseEvent) {
+  function onPointerUp(_e: TouchEvent | MouseEvent) {
     isDragging = false;
+
     initialPinchDistance = null;
     lastZoom = view.zoom;
   }
 
   function onPointerMove(e: MouseEvent | TouchEvent) {
-    if (isDragging) {
-      console.dir(view);
-      view.start_x = -getEventLocation(e).x / view.zoom + dragStart.x;
-      view.start_y = -getEventLocation(e).y / view.zoom + dragStart.y;
-      view.start_x = Math.max(1, view.start_x);
-      view.start_y = Math.max(1, view.start_y);
-      view.dirty = true;
+    if (!isDragging) {
+      return;
     }
+    view.start_x = -getEventLocation(e).x / view.zoom + dragStart.x;
+    view.start_y = -getEventLocation(e).y / view.zoom + dragStart.y;
+    view.start_x = Math.max(1, view.start_x);
+    view.start_y = Math.max(1, view.start_y);
+    view.dirty = true;
   }
 
   function handleTouch(
@@ -79,20 +81,18 @@ export function setup_canvas(canvas: HTMLCanvasElement, view: ViewSettings) {
     zoomAmount: number | null | undefined,
     zoomFactor: number | null | undefined
   ) {
-    if (!isDragging) {
-      if (zoomAmount) {
-        view.zoom += zoomAmount;
-      } else if (zoomFactor) {
-        console.log(zoomFactor);
-        view.zoom = zoomFactor * lastZoom;
-      }
-      view.dirty = true;
-
-      view.zoom = Math.min(view.zoom, MAX_ZOOM);
-      view.zoom = Math.max(view.zoom, MIN_ZOOM);
-
-      console.log(zoomAmount);
+    if (isDragging) {
+      return;
     }
+    if (zoomAmount) {
+      view.zoom += zoomAmount;
+    } else if (zoomFactor) {
+      view.zoom = zoomFactor * lastZoom;
+    }
+    view.dirty = true;
+
+    view.zoom = Math.min(view.zoom, MAX_ZOOM);
+    view.zoom = Math.max(view.zoom, MIN_ZOOM);
   }
 
   canvas.addEventListener("mousedown", onPointerDown);

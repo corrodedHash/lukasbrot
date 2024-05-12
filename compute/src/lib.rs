@@ -13,9 +13,7 @@ pub fn draw(
     start_x_str: &str,
     start_y_str: &str,
 ) -> Result<(), JsValue> {
-    unsafe {
-        web_sys::console::log_1(&"Starting calculation".into());
-    }
+    web_sys::console::log_1(&"Starting calculation".into());
     let smol_x = start_x_str.parse::<u64>();
     let smol_y = start_y_str.parse::<u64>();
 
@@ -30,19 +28,13 @@ pub fn draw(
             return Err("Could not draw with that number".into());
         }
     };
-    unsafe {
-        web_sys::console::log_1(&"Finished calculation".into());
-    }
+    web_sys::console::log_1(&"Finished calculation".into());
 
     let image_data = ImageData::new_with_u8_clamped_array_and_sh(Clamped(&data), width, height)?;
-    unsafe {
-        web_sys::console::log_1(&"Saved image data".into());
-    }
+    web_sys::console::log_1(&"Saved image data".into());
 
     let result = ctx.put_image_data(&image_data, 0.0, 0.0);
-    unsafe {
-        web_sys::console::log_1(&"Put image data".into());
-    }
+    web_sys::console::log_1(&"Put image data".into());
     result
 }
 
@@ -70,8 +62,7 @@ mod smolboy {
     }
 
     pub(crate) fn draw_field(start_x: u64, start_y: u64, width: u32, height: u32) -> Vec<u8> {
-        let mut result = vec![];
-        result.reserve(4 * (width as usize) * (height as usize));
+        let mut result = Vec::with_capacity(4 * (width as usize) * (height as usize));
         for y_offset in 0..height {
             let y = start_y + u64::from(y_offset);
             for x_offset in 0..width {
